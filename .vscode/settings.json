@@ -1,0 +1,14 @@
+{
+    "terminal.integrated.env.linux": {
+        "PATH": "/home/democles/.platformio/penv/bin:/home/democles/.platformio/penv:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl",
+        "PLATFORMIO_CALLER": "vscode"
+    },
+    "C_Cpp.errorSquiggles": "Disabled",
+    "telemetry.enableCrashReporter": false,
+    "telemetry.enableTelemetry": false,
+    "C_Cpp.default.cStandard": "c11",
+    "C_Cpp.default.intelliSenseMode": "gcc-x64",
+    "cortex-debug.enableTelemetry": false,
+    "cortex-debug.armToolchainPath": "/home/democles/opt/gnu-mcu-eclipse/arm-none-eabi-gcc/8.2.1-1.4-20190214-0604/bin/",
+    "cortex-debug.openocdPath": "/home/democles/opt/gnu-mcu-eclipse/openocd/0.10.0-10-20181020-0522/bin/openocd"
+}
