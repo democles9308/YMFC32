@@ -36,6 +36,7 @@ extern float declination;
 
 extern int16_t manual_takeoff_throttle;
 extern int16_t motor_idle_speed;
+
 extern uint8_t gyro_address;
 extern uint8_t MS5611_address;
 extern uint8_t compass_address;
