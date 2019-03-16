@@ -89,15 +89,11 @@ int16_t temperature, count_var;
 int16_t acc_x, acc_y, acc_z;
 int16_t gyro_pitch, gyro_roll, gyro_yaw;
 
-int32_t channel_1_start, channel_1, channel_1_base, pid_roll_setpoint_base;
-int32_t channel_2_start, channel_2, channel_2_base, pid_pitch_setpoint_base;
-int32_t channel_3_start, channel_3;
-int32_t channel_4_start, channel_4;
-int32_t channel_5_start, channel_5;
-int32_t channel_6_start, channel_6;
-int32_t channel_7_start, channel_7;
-int32_t channel_8_start, channel_8;
+int32_t channel_1, channel_1_base, pid_roll_setpoint_base;
+int32_t channel_2, channel_2_base, pid_pitch_setpoint_base;
+int32_t channel_3, channel_4, channel_5, channel_6, channel_7, channel_8;
 int32_t measured_time, measured_time_start, receiver_watchdog;
+
 int32_t acc_total_vector, acc_total_vector_at_start;
 int32_t gyro_roll_cal, gyro_pitch_cal, gyro_yaw_cal;
 int16_t acc_pitch_cal_value;
@@ -283,7 +279,6 @@ void setup() {
     delay(4);                                                   //Delay 4ms to simulate a 250Hz loop
   }
   error = 0;                                                    //Reset the error status to 0.
-
 
   //When everything is done, turn off the led.
   red_led(LOW);                                                 //Set output PB3 low.

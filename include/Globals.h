@@ -54,14 +54,9 @@ extern int16_t temperature, count_var;
 extern int16_t acc_x, acc_y, acc_z;
 extern int16_t gyro_pitch, gyro_roll, gyro_yaw;
 
-extern int32_t channel_1_start, channel_1, channel_1_base, pid_roll_setpoint_base;
-extern int32_t channel_2_start, channel_2, channel_2_base, pid_pitch_setpoint_base;
-extern int32_t channel_3_start, channel_3;
-extern int32_t channel_4_start, channel_4;
-extern int32_t channel_5_start, channel_5;
-extern int32_t channel_6_start, channel_6;
-extern int32_t channel_7_start, channel_7;
-extern int32_t channel_8_start, channel_8;
+extern int32_t channel_1, channel_1_base, pid_roll_setpoint_base;
+extern int32_t channel_2, channel_2_base, pid_pitch_setpoint_base;
+extern int32_t channel_3, channel_4, channel_5, channel_6, channel_7, channel_8;
 extern int32_t measured_time, measured_time_start, receiver_watchdog;
 extern int32_t acc_total_vector, acc_total_vector_at_start;
 extern int32_t gyro_roll_cal, gyro_pitch_cal, gyro_yaw_cal;
