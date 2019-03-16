@@ -95,6 +95,8 @@ int32_t channel_3_start, channel_3;
 int32_t channel_4_start, channel_4;
 int32_t channel_5_start, channel_5;
 int32_t channel_6_start, channel_6;
+int32_t channel_7_start, channel_7;
+int32_t channel_8_start, channel_8;
 int32_t measured_time, measured_time_start, receiver_watchdog;
 int32_t acc_total_vector, acc_total_vector_at_start;
 int32_t gyro_roll_cal, gyro_pitch_cal, gyro_yaw_cal;
@@ -179,46 +181,44 @@ float adjustable_setting_1, adjustable_setting_2, adjustable_setting_3;
 //Setup routine
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup() {
-  pinMode(4, INPUT_ANALOG);                                     //This is needed for reading the analog value of port A4.
+  pinMode(4, INPUT_ANALOG);                                     //This is needed for reading the analog value of port A4 (battery voltage)
   //Port PB3 and PB4 are used as JTDO and JNTRST by default.
   //The following function connects PB3 and PB4 to the
   //alternate output function.
   afio_cfg_debug_ports(AFIO_DEBUG_SW_ONLY);                     //Connects PB3 and PB4 to output function.
   
-  //pinMode(PB1, OUTPUT);
+  pinMode(PB0, OUTPUT);                                         //Set PB0 as output for telemetry TX.
   pinMode(PB3, OUTPUT);                                         //Set PB3 as output for red LED.
   pinMode(PB4, OUTPUT);                                         //Set PB4 as output for blue LED.
   pinMode(PB5, OUTPUT);                                         //Set PB5 as output for green LED.
   pinMode(STM32_board_LED, OUTPUT);                             //This is the LED on the STM32 board. Used for GPS indication.
   digitalWrite(STM32_board_LED, HIGH);                          //Turn the LED on the STM32 off. The LED function is inverted. Check the STM32 schematic.
 
-  green_led(LOW);                                               //Set output PB3 low.
+  green_led(LOW);                                               //status Leds
   blue_led(LOW);
-  red_led(HIGH);                                                //Set output PB5 high.
+  red_led(HIGH);                                                
 
-  pinMode(PB0, OUTPUT);                                         //Set PB0 as output for telemetry TX.
- 
   //EEPROM emulation setup
   EEPROM.PageBase0 = 0x801F000;
   EEPROM.PageBase1 = 0x801F800;
   EEPROM.PageSize  = 0x400;
 
-  Serial.begin(9600);                                        //Set the serial output to 57600 kbps. (for debugging only)
-  delay(2500);                                                 //Give the serial port some time to start to prevent data loss.
-
-  Serial.println(" ON4CRM DRONE CONTROLLER Setup Sequence");
+  //Serial.begin(9600);                                        //Set the serial output to 57600 kbps. (for debugging only)
+  //delay(2500);                                                 //Give the serial port some time to start to prevent data loss.
+  //Serial.println(" ON4CRM DRONE CONTROLLER Setup Sequence");
 
   timer_setup();                                                //Setup the timers for the receiver inputs and ESC's output.
   delay(50);                                                    //Give the timers some time to start.
 
-  Serial.print("GPS initialization:");
+  //Serial.print("GPS initialization:");
   gps_setup();                                                  //Set the baud rate and output refreshrate of the GPS module.
 
- Serial.println (" Done");
+  //Serial.println (" Done");
 
   //Check if the MPU-6050 is responding.
-  Serial.print("MPU6050 initialization @ ");
-  Serial.print(gyro_address, HEX);
+  //Serial.print("MPU6050 initialization @ ");
+  //Serial.print(gyro_address, HEX);
+  
   HWire.begin();                                                //Start the I2C as master
   HWire.beginTransmission(gyro_address);                        //Start communication with the MPU-6050.
   error = HWire.endTransmission();                              //End the transmission and register the exit status.
@@ -228,11 +228,11 @@ void setup() {
     delay(4);                                                   //Simulate a 250Hz refresch rate as like the main loop.
   }
   
-  Serial.println (" Done");
+  //Serial.println (" Done");
   
   //Check if the compass is responding.
-  Serial.print("COMPASS initialization @ ");
-  Serial.print(compass_address, HEX);
+  //Serial.print("COMPASS initialization @ ");
+  //Serial.print(compass_address, HEX);
     
   HWire.begin();                                                 //Start the I2C as master
   HWire.beginTransmission(compass_address);                     //Start communication with the HMC5883L.
@@ -242,18 +242,18 @@ void setup() {
     error_signal();                                             //Show the error via the red LED.
     delay(4);                                                   //Simulate a 250Hz refresch rate as like the main loop.
   }
-  Serial.println(" Done");
+  //Serial.println(" Done");
 
   //Check if the MS5611 barometer is responding.
-  Serial.print("BAROMETER initialization @ ");
-  Serial.print(baro_address, HEX);
+  //Serial.print("BAROMETER initialization @ ");
+  //Serial.print(baro_address, HEX);
 
   HWire.begin();                                                //Start the I2C as master
   HWire.beginTransmission(baro_address);                      //Start communication with the MS5611.
   error = HWire.endTransmission();                              //End the transmission and register the exit status.
   
-  if (error == 0) Serial.println("Done");
-  else Serial.println(" NOK");
+  //if (error == 0) Serial.println("Done");
+  //else Serial.println(" NOK");
 
   while (error != 0) {                                          //Stay in this loop because the MS5611 did not responde.
     error = 3;                                                  //Set the error status to 2.
@@ -297,8 +297,7 @@ void setup() {
   //The variable battery_voltage holds 1050 if the battery voltage is 10.5V.
   
   battery_voltage = (float)analogRead(4) / 112.81;
-  //battery_voltage=1050;
-  
+    
   //For calculating the pressure the 6 calibration values need to be polled from the MS5611.
   //These 2 byte values are stored in the memory location 0xA2 and up.
   for (start = 1; start <= 6; start++) {
@@ -330,10 +329,9 @@ void setup() {
   if (motor_idle_speed < 1000)motor_idle_speed = 1000;          //Limit the minimum idle motor speed to 1000us.
   if (motor_idle_speed > 1200)motor_idle_speed = 1200;          //Limit the maximum idle motor speed to 1200us.
  
-  //telemetry_loop_counter = 0;
-
   loop_timer = micros();                                        //Set the timer for the first loop.
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Main program loop
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -487,7 +485,6 @@ void loop() {
   //Turn on the led if battery voltage is to low. Default setting is 10.5V
   if (battery_voltage > 6.0 && battery_voltage < low_battery_warning && error == 0)error = 1;
 
-
   //The variable base_throttle is calculated in the following part. It forms the base throttle for every motor.
   if (takeoff_detected == 1 && start == 2) {                                         //If the quadcopter is started and flying.
     throttle = channel_3 + takeoff_throttle;                                         //The base throttle is the receiver throttle channel + the detected take-off throttle.
@@ -533,7 +530,7 @@ void loop() {
     esc_4 = 1000;                                                                  //If start is not 2 keep a 1000us pulse for ess-4.
   }
 
-
+  // ADAPTED to my hardware setup / pinout 
   TIMER4_BASE->CCR1 = esc_3;                                                       //Set the throttle receiver input pulse to the ESC 3 output pulse.
   TIMER4_BASE->CCR2 = esc_2;                                                       //Set the throttle receiver input pulse to the ESC 2 output pulse.
   TIMER4_BASE->CCR3 = esc_4;                                                       //Set the throttle receiver input pulse to the ESC 4 output pulse.

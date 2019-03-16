@@ -15,7 +15,7 @@
 
 void change_settings(void) {
   red_led(HIGH);
-  green_led(LOW);
+  green_led(HIGH);
   adjustable_setting_1 = variable_1_to_adjust;
   adjustable_setting_2 = variable_2_to_adjust;
   adjustable_setting_3 = variable_3_to_adjust;
@@ -46,4 +46,5 @@ void change_settings(void) {
   }
   loop_timer = micros();                                                           //Set the timer for the next loop.
   red_led(LOW);
+  green_led(LOW);
 }

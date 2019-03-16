@@ -60,6 +60,8 @@ extern int32_t channel_3_start, channel_3;
 extern int32_t channel_4_start, channel_4;
 extern int32_t channel_5_start, channel_5;
 extern int32_t channel_6_start, channel_6;
+extern int32_t channel_7_start, channel_7;
+extern int32_t channel_8_start, channel_8;
 extern int32_t measured_time, measured_time_start, receiver_watchdog;
 extern int32_t acc_total_vector, acc_total_vector_at_start;
 extern int32_t gyro_roll_cal, gyro_pitch_cal, gyro_yaw_cal;

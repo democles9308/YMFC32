@@ -19,5 +19,7 @@ void handler_channel_1(void) {
   if (channel_select_counter == 4)channel_4 = measured_time;
   if (channel_select_counter == 5)channel_5 = measured_time;
   if (channel_select_counter == 6)channel_6 = measured_time;
+  if (channel_select_counter == 7)channel_7 = measured_time;
+  if (channel_select_counter == 8)channel_8 = measured_time;
 }
 
