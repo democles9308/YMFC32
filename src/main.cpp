@@ -17,12 +17,11 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include <Wire.h>                          //Include the Wire.h library so we can communicate with the gyro.
-//#include "Globals.h"
+#include "Globals.h"
 
 #define STM32_board_LED PC13               //Change PC13 if the LED on the STM32 is connected to another output.
 
 TwoWire HWire (2, I2C_FAST_MODE);          //Initiate I2C port 2 at 400kHz.
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //PID gain and limit settings
@@ -46,6 +45,7 @@ int pid_max_yaw = 400;                     //Maximum output of the PID-controlle
 //altitude hold function. With the battery_compensation variable it's possible to compensate for the battery voltage drop.
 //Increase this value when the quadcopter drops due to a lower battery voltage during a non altitude hold flight.
 float battery_compensation = 40.0;
+float low_battery_warning = 10.5;          //Set the battery warning at 10.5V (default = 10.5V).
 
 float pid_p_gain_altitude = 1.4;           //Gain setting for the altitude P-controller (default = 1.4).
 float pid_i_gain_altitude = 0.2;           //Gain setting for the altitude I-controller (default = 0.2).
@@ -60,11 +60,10 @@ float declination = 1.8;                   //Set the declination between the mag
 int16_t manual_takeoff_throttle = 0;       //Enter the manual hover point when auto take-off detection is not desired (between 1400 and 1600).
 int16_t motor_idle_speed = 1100;           //Enter the minimum throttle pulse of the motors when they idle (between 1000 and 1200). 1170 for DJI
 
-uint8_t gyro_address = 0x68;               //The I2C address of the MPU-6050 is 0x68 in hexadecimal form.
-uint8_t MS5611_address = 0x77;             //The I2C address of the MS5611 barometer is 0x77 in hexadecimal form.
-uint8_t compass_address = 0x1E;            //The I2C address of the HMC5883L is 0x1E in hexadecimal form.
+const uint8_t gyro_address = 0x68;               //The I2C address of the MPU-6050 is 0x68 in hexadecimal form.
+const uint8_t baro_address = 0x77;               //The I2C address of the MS5611 barometer is 0x77 in hexadecimal form.
+const uint8_t compass_address = 0x1E;            //The I2C address of the HMC5883L is 0x1E in hexadecimal form.
 
-float low_battery_warning = 10.5;          //Set the battery warning at 10.5V (default = 10.5V).
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Declaring global variables
@@ -176,32 +175,6 @@ uint16_t setting_click_counter;
 uint8_t previous_channel_6;
 float adjustable_setting_1, adjustable_setting_2, adjustable_setting_3;
 
-//forward declarations
-void read_barometer(void);
-void calculate_pid(void);
-void calibrate_compass(void); 
-void calibrate_level(void);
-void change_settings(void);
-void gyro_setup(void);
-void gyro_signalen(void);
-void calibrate_gyro(void);
-void handler_channel_1(void);
-void red_led(int8_t level);
-void green_led(int8_t level);
-void blue_led(int8_t level);
-void error_signal(void);
-void flight_mode_signal(void); 
-void read_compass() ;
-void setup_compass() ;
-float course_deviation(float course_b, float course_c);
-void gps_setup(void);
-void read_gps(void);
-void return_to_home(void);
-void send_telemetry_data(void);
-void start_stop_takeoff(void);
-void timer_setup(void);
-void vertical_acceleration_calculations(void);
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Setup routine
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -212,8 +185,7 @@ void setup() {
   //alternate output function.
   afio_cfg_debug_ports(AFIO_DEBUG_SW_ONLY);                     //Connects PB3 and PB4 to output function.
   
-  pinMode(PB1, OUTPUT);
-  
+  //pinMode(PB1, OUTPUT);
   pinMode(PB3, OUTPUT);                                         //Set PB3 as output for red LED.
   pinMode(PB4, OUTPUT);                                         //Set PB4 as output for blue LED.
   pinMode(PB5, OUTPUT);                                         //Set PB5 as output for green LED.
@@ -225,22 +197,28 @@ void setup() {
   red_led(HIGH);                                                //Set output PB5 high.
 
   pinMode(PB0, OUTPUT);                                         //Set PB0 as output for telemetry TX.
-  //Serial1.begin(9600);
-
+ 
   //EEPROM emulation setup
   EEPROM.PageBase0 = 0x801F000;
   EEPROM.PageBase1 = 0x801F800;
   EEPROM.PageSize  = 0x400;
 
-  //Serial.begin(57600);                                        //Set the serial output to 57600 kbps. (for debugging only)
-  //delay(250);                                                 //Give the serial port some time to start to prevent data loss.
+  Serial.begin(9600);                                        //Set the serial output to 57600 kbps. (for debugging only)
+  delay(2500);                                                 //Give the serial port some time to start to prevent data loss.
+
+  Serial.println(" ON4CRM DRONE CONTROLLER Setup Sequence");
 
   timer_setup();                                                //Setup the timers for the receiver inputs and ESC's output.
   delay(50);                                                    //Give the timers some time to start.
 
+  Serial.print("GPS initialization:");
   gps_setup();                                                  //Set the baud rate and output refreshrate of the GPS module.
 
+ Serial.println (" Done");
+
   //Check if the MPU-6050 is responding.
+  Serial.print("MPU6050 initialization @ ");
+  Serial.print(gyro_address, HEX);
   HWire.begin();                                                //Start the I2C as master
   HWire.beginTransmission(gyro_address);                        //Start communication with the MPU-6050.
   error = HWire.endTransmission();                              //End the transmission and register the exit status.
@@ -249,8 +227,13 @@ void setup() {
     error_signal();                                             //Show the error via the red LED.
     delay(4);                                                   //Simulate a 250Hz refresch rate as like the main loop.
   }
-
+  
+  Serial.println (" Done");
+  
   //Check if the compass is responding.
+  Serial.print("COMPASS initialization @ ");
+  Serial.print(compass_address, HEX);
+    
   HWire.begin();                                                 //Start the I2C as master
   HWire.beginTransmission(compass_address);                     //Start communication with the HMC5883L.
   error = HWire.endTransmission();                              //End the transmission and register the exit status.
@@ -259,11 +242,19 @@ void setup() {
     error_signal();                                             //Show the error via the red LED.
     delay(4);                                                   //Simulate a 250Hz refresch rate as like the main loop.
   }
+  Serial.println(" Done");
 
   //Check if the MS5611 barometer is responding.
+  Serial.print("BAROMETER initialization @ ");
+  Serial.print(baro_address, HEX);
+
   HWire.begin();                                                //Start the I2C as master
-  HWire.beginTransmission(MS5611_address);                      //Start communication with the MS5611.
+  HWire.beginTransmission(baro_address);                      //Start communication with the MS5611.
   error = HWire.endTransmission();                              //End the transmission and register the exit status.
+  
+  if (error == 0) Serial.println("Done");
+  else Serial.println(" NOK");
+
   while (error != 0) {                                          //Stay in this loop because the MS5611 did not responde.
     error = 3;                                                  //Set the error status to 2.
     error_signal();                                             //Show the error via the red LED.
@@ -305,17 +296,17 @@ void setup() {
   //36.3 / 4095 = 112.81.
   //The variable battery_voltage holds 1050 if the battery voltage is 10.5V.
   
-  //battery_voltage = (float)analogRead(4) / 112.81;
-  battery_voltage=1050;
+  battery_voltage = (float)analogRead(4) / 112.81;
+  //battery_voltage=1050;
   
   //For calculating the pressure the 6 calibration values need to be polled from the MS5611.
   //These 2 byte values are stored in the memory location 0xA2 and up.
   for (start = 1; start <= 6; start++) {
-    HWire.beginTransmission(MS5611_address);                    //Start communication with the MPU-6050.
+    HWire.beginTransmission(baro_address);                    //Start communication with the MPU-6050.
     HWire.write(0xA0 + start * 2);                              //Send the address that we want to read.
     HWire.endTransmission();                                    //End the transmission.
 
-    HWire.requestFrom(MS5611_address, 2);                       //Request 2 bytes from the MS5611.
+    HWire.requestFrom(baro_address, 2);                       //Request 2 bytes from the MS5611.
     C[start] = HWire.read() << 8 | HWire.read();                //Add the low and high byte to the C[x] calibration variable.
   }
 

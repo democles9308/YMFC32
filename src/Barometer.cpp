@@ -7,15 +7,15 @@ void read_barometer(void) {
   barometer_counter ++;
 
   //Every time this function is called the barometer_counter variable is incremented. This way a specific action
-  //is executed at the correct moment. This is needed because requesting data from the MS5611 takes around 9ms to complete.
+  //is executed at the correct moment. This is needed because requesting data from the baro takes around 9ms to complete.
 
   if (barometer_counter == 1) {                                                 //When the barometer_counter variable is 1.
     if (temperature_counter == 0) {                                             //And the temperature counter is 0.
       //Get temperature data from MS-5611
-      HWire.beginTransmission(MS5611_address);                                  //Open a connection with the MS5611
+      HWire.beginTransmission(baro_address);                                  //Open a connection with the baro
       HWire.write(0x00);                                                        //Send a 0 to indicate that we want to poll the requested data.
-      HWire.endTransmission();                                                  //End the transmission with the MS5611.
-      HWire.requestFrom(MS5611_address, 3);                                     //Poll 3 data bytes from the MS5611.
+      HWire.endTransmission();                                                  //End the transmission with the baro.
+      HWire.requestFrom(baro_address, 3);                                     //Poll 3 data bytes from the baro.
       // Store the temperature in a 5 location rotating memory to prevent temperature spikes.
       raw_average_temperature_total -= raw_temperature_rotating_memory[average_temperature_mem_location];
       raw_temperature_rotating_memory[average_temperature_mem_location] = HWire.read() << 16 | HWire.read() << 8 | HWire.read();
@@ -26,10 +26,10 @@ void read_barometer(void) {
     }
     else {
       //Get pressure data from MS-5611
-      HWire.beginTransmission(MS5611_address);                                  //Open a connection with the MS5611.
+      HWire.beginTransmission(baro_address);                                  //Open a connection with the baro.
       HWire.write(0x00);                                                        //Send a 0 to indicate that we want to poll the requested data.
-      HWire.endTransmission();                                                  //End the transmission with the MS5611.
-      HWire.requestFrom(MS5611_address, 3);                                     //Poll 3 data bytes from the MS5611.
+      HWire.endTransmission();                                                  //End the transmission with the baro.
+      HWire.requestFrom(baro_address, 3);                                     //Poll 3 data bytes from the baro.
       raw_pressure = HWire.read() << 16 | HWire.read() << 8 | HWire.read();     //Shift the individual bytes in the correct position and add them to the raw_pressure variable.
     }
 
@@ -37,15 +37,15 @@ void read_barometer(void) {
     if (temperature_counter == 20) {                                            //When the temperature counter equals 20.
       temperature_counter = 0;                                                  //Reset the temperature_counter variable.
       //Request temperature data
-      HWire.beginTransmission(MS5611_address);                                  //Open a connection with the MS5611.
+      HWire.beginTransmission(baro_address);                                  //Open a connection with the baro.
       HWire.write(0x58);                                                        //Send a 0x58 to indicate that we want to request the temperature data.
-      HWire.endTransmission();                                                  //End the transmission with the MS5611.
+      HWire.endTransmission();                                                  //End the transmission with the baro.
     }
     else {                                                                      //If the temperature_counter variable does not equal 20.
       //Request pressure data
-      HWire.beginTransmission(MS5611_address);                                  //Open a connection with the MS5611
+      HWire.beginTransmission(baro_address);                                  //Open a connection with the baro
       HWire.write(0x48);                                                        //Send a 0x48 to indicate that we want to request the pressure data.
-      HWire.endTransmission();                                                  //End the transmission with the MS5611.
+      HWire.endTransmission();                                                  //End the transmission with the baro.
     }
   }
   if (barometer_counter == 2) {                                                 //If the barometer_counter variable equals 2.

@@ -1,14 +1,12 @@
-//#include "Arduino.h"
-//#include "EEPROM.h"
-//#include "Wire.h" 
-//Tuning parameters/settings is explained in this video: https://youtu.be/ys-YpOaA2ME
- //#define variable_1_to_adjust dummy_float   //Change dummy_float to any setting that you want to tune.
-//#define variable_2_to_adjust dummy_float   //Change dummy_float to any setting that you want to tune.
-//#define variable_3_to_adjust dummy_float   //Change dummy_float to any setting that you want to tune.
-
-//#define STM32_board_LED PC13 //PA1               //Change PC13 if the LED on the STM32 is connected to another output.
+///////////////////////////
+//  global delcarations  //
+///////////////////////////
 
 extern class TwoWire HWire;
+
+extern const uint8_t gyro_address;
+extern const uint8_t baro_address;
+extern const uint8_t compass_address;
 
 extern float pid_p_gain_roll;
 extern float pid_i_gain_roll;
@@ -37,12 +35,6 @@ extern float declination;
 
 extern int16_t manual_takeoff_throttle;
 extern int16_t motor_idle_speed;
-
-extern uint8_t gyro_address;
-extern uint8_t MS5611_address;
-extern uint8_t compass_address;
-
-extern float low_battery_warning; 
 
 extern uint8_t last_channel_1, last_channel_2, last_channel_3, last_channel_4;
 extern uint8_t check_byte, flip32, start;
@@ -89,6 +81,7 @@ extern float pid_i_mem_pitch, pid_pitch_setpoint, gyro_pitch_input, pid_output_p
 extern float pid_i_mem_yaw, pid_yaw_setpoint, gyro_yaw_input, pid_output_yaw, pid_last_yaw_d_error;
 extern float angle_roll_acc, angle_pitch_acc, angle_pitch, angle_roll, angle_yaw;
 extern float battery_voltage, dummy_float;
+extern float low_battery_warning;
 
 //Compass variables
 extern uint8_t compass_calibration_on, heading_lock;
