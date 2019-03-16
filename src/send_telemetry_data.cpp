@@ -2,6 +2,7 @@
 //This part sends the telemetry data to the ground station.
 //The output for the serial monitor is PB0. Protocol is 1 start bit, 8 data bits, no parity, 1 stop bit.
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include <Arduino.h>
 #include "Globals.h"
 
 void send_telemetry_data(void) {

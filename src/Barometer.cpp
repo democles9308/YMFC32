@@ -1,6 +1,9 @@
+#include <Arduino.h>
+#include <Wire.h>
 #include "Globals.h"
 
 void read_barometer(void) {
+  
   barometer_counter ++;
 
   //Every time this function is called the barometer_counter variable is incremented. This way a specific action

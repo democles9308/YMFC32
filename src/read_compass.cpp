@@ -1,3 +1,7 @@
+
+#include <Arduino.h>
+#include <Wire.h>
+#include <EEPROM.h>
 #include "Globals.h"
 
 void read_compass() {

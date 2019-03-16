@@ -1,14 +1,15 @@
-#include "Arduino.h"
-#include "EEPROM.h"
-#include "Wire.h" 
+//#include "Arduino.h"
+//#include "EEPROM.h"
+//#include "Wire.h" 
 //Tuning parameters/settings is explained in this video: https://youtu.be/ys-YpOaA2ME
-#define variable_1_to_adjust dummy_float   //Change dummy_float to any setting that you want to tune.
-#define variable_2_to_adjust dummy_float   //Change dummy_float to any setting that you want to tune.
-#define variable_3_to_adjust dummy_float   //Change dummy_float to any setting that you want to tune.
+ //#define variable_1_to_adjust dummy_float   //Change dummy_float to any setting that you want to tune.
+//#define variable_2_to_adjust dummy_float   //Change dummy_float to any setting that you want to tune.
+//#define variable_3_to_adjust dummy_float   //Change dummy_float to any setting that you want to tune.
 
-#define STM32_board_LED PC13 //PA1               //Change PC13 if the LED on the STM32 is connected to another output.
+//#define STM32_board_LED PC13 //PA1               //Change PC13 if the LED on the STM32 is connected to another output.
 
-extern TwoWire HWire;
+extern class TwoWire HWire;
+
 extern float pid_p_gain_roll;
 extern float pid_i_gain_roll;
 extern float pid_d_gain_roll;

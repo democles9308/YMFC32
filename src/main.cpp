@@ -14,10 +14,15 @@
 //Always remove the propellers and stay away from the motors unless you
 //are 100% certain of what you are doing.
 ///////////////////////////////////////////////////////////////////////////////////////
-#include "Arduino.h"
+#include <Arduino.h>
 #include <EEPROM.h>
 #include <Wire.h>                          //Include the Wire.h library so we can communicate with the gyro.
+//#include "Globals.h"
+
+#define STM32_board_LED PC13               //Change PC13 if the LED on the STM32 is connected to another output.
+
 TwoWire HWire (2, I2C_FAST_MODE);          //Initiate I2C port 2 at 400kHz.
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //PID gain and limit settings
@@ -52,7 +57,7 @@ float gps_d_gain = 6.5;                    //Gain setting for the GPS D-controll
 
 float declination = 1.8;                   //Set the declination between the magnetic and geographic north.
 
-int16_t manual_takeoff_throttle = 0;    //Enter the manual hover point when auto take-off detection is not desired (between 1400 and 1600).
+int16_t manual_takeoff_throttle = 0;       //Enter the manual hover point when auto take-off detection is not desired (between 1400 and 1600).
 int16_t motor_idle_speed = 1100;           //Enter the minimum throttle pulse of the motors when they idle (between 1000 and 1200). 1170 for DJI
 
 uint8_t gyro_address = 0x68;               //The I2C address of the MPU-6050 is 0x68 in hexadecimal form.
@@ -60,13 +65,6 @@ uint8_t MS5611_address = 0x77;             //The I2C address of the MS5611 barom
 uint8_t compass_address = 0x1E;            //The I2C address of the HMC5883L is 0x1E in hexadecimal form.
 
 float low_battery_warning = 10.5;          //Set the battery warning at 10.5V (default = 10.5V).
-
-#define STM32_board_LED PC13 //PA1               //Change PC13 if the LED on the STM32 is connected to another output.
-
-//Tuning parameters/settings is explained in this video: https://youtu.be/ys-YpOaA2ME
-#define variable_1_to_adjust dummy_float   //Change dummy_float to any setting that you want to tune.
-#define variable_2_to_adjust dummy_float   //Change dummy_float to any setting that you want to tune.
-#define variable_3_to_adjust dummy_float   //Change dummy_float to any setting that you want to tune.
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Declaring global variables
@@ -253,7 +251,7 @@ void setup() {
   }
 
   //Check if the compass is responding.
-  HWire.begin();                                                //Start the I2C as master
+  HWire.begin();                                                 //Start the I2C as master
   HWire.beginTransmission(compass_address);                     //Start communication with the HMC5883L.
   error = HWire.endTransmission();                              //End the transmission and register the exit status.
   while (error != 0) {                                          //Stay in this loop because the HMC5883L did not responde.

@@ -4,7 +4,14 @@
 //Changing the settings is explained in this video:
 //https://youtu.be/ys-YpOaA2ME
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include <Arduino.h>
 #include "Globals.h"
+
+//Tuning parameters/settings is explained in this video: https://youtu.be/ys-YpOaA2ME
+#define variable_1_to_adjust pid_p_gain_altitude   //Change dummy_float to any setting that you want to tune.
+#define variable_2_to_adjust pid_i_gain_altitude   //Change dummy_float to any setting that you want to tune.
+#define variable_3_to_adjust pid_d_gain_altitude   //Change dummy_float to any setting that you want to tune.
 
 void change_settings(void) {
   red_led(HIGH);

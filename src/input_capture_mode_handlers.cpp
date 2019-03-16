@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "Globals.h"
 
 //In this file the timers for reading the receiver pulses and for creating the output ESC pulses are set.
