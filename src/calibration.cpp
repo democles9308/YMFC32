@@ -8,7 +8,7 @@
 
 void calibrate_compass(void) {
   compass_calibration_on = 1;                                                //Set the compass_calibration_on variable to disable the adjustment of the raw compass values.
-  blue_led(HIGH);                                                             //The red led will indicate that the compass calibration is active.
+  blue_led(HIGH);                                                            //The red led will indicate that the compass calibration is active.
   green_led(LOW);                                                            //Turn off the green led as we don't need it.
   while (channel_2 < 1900) {                                                 //Stay in this loop until the pilot lowers the pitch stick of the transmitter.
     send_telemetry_data();                                                   //Send telemetry data to the ground station.

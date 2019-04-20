@@ -19,8 +19,6 @@
 #include <Wire.h>                          //Include the Wire.h library so we can communicate with the gyro.
 #include "Globals.h"
 
-#define STM32_board_LED PC13               //Change PC13 if the LED on the STM32 is connected to another output.
-
 TwoWire HWire (2, I2C_FAST_MODE);          //Initiate I2C port 2 at 400kHz.
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,12 +55,12 @@ float gps_d_gain = 6.5;                    //Gain setting for the GPS D-controll
 
 float declination = 1.8;                   //Set the declination between the magnetic and geographic north.
 
-int16_t manual_takeoff_throttle = 0;       //Enter the manual hover point when auto take-off detection is not desired (between 1400 and 1600).
+int16_t manual_takeoff_throttle = 0;    //Enter the manual hover point when auto take-off detection is not desired (between 1400 and 1600).
 int16_t motor_idle_speed = 1100;           //Enter the minimum throttle pulse of the motors when they idle (between 1000 and 1200). 1170 for DJI
 
-const uint8_t gyro_address = 0x68;               //The I2C address of the MPU-6050 is 0x68 in hexadecimal form.
-const uint8_t baro_address = 0x77;               //The I2C address of the MS5611 barometer is 0x77 in hexadecimal form.
-const uint8_t compass_address = 0x1E;            //The I2C address of the HMC5883L is 0x1E in hexadecimal form.
+const uint8_t gyro_address = 0x68;         //The I2C address of the MPU-6050 is 0x68 in hexadecimal form.
+const uint8_t baro_address = 0x77;         //The I2C address of the MS5611 barometer is 0x77 in hexadecimal form.
+const uint8_t compass_address = 0x1E;      //The I2C address of the HMC5883L is 0x1E in hexadecimal form.
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -199,22 +197,15 @@ void setup() {
   EEPROM.PageBase1 = 0x801F800;
   EEPROM.PageSize  = 0x400;
 
-  //Serial.begin(9600);                                        //Set the serial output to 57600 kbps. (for debugging only)
-  //delay(2500);                                                 //Give the serial port some time to start to prevent data loss.
-  //Serial.println(" ON4CRM DRONE CONTROLLER Setup Sequence");
+  Serial.begin(9600);                                        //Set the serial output to 57600 kbps. (for debugging only)
+  delay(2500);                                                 //Give the serial port some time to start to prevent data loss.
+  Serial.println(" ON4CRM DRONE CONTROLLER DEBUG");
 
   timer_setup();                                                //Setup the timers for the receiver inputs and ESC's output.
   delay(50);                                                    //Give the timers some time to start.
 
-  //Serial.print("GPS initialization:");
   gps_setup();                                                  //Set the baud rate and output refreshrate of the GPS module.
 
-  //Serial.println (" Done");
-
-  //Check if the MPU-6050 is responding.
-  //Serial.print("MPU6050 initialization @ ");
-  //Serial.print(gyro_address, HEX);
-  
   HWire.begin();                                                //Start the I2C as master
   HWire.beginTransmission(gyro_address);                        //Start communication with the MPU-6050.
   error = HWire.endTransmission();                              //End the transmission and register the exit status.
@@ -224,13 +215,7 @@ void setup() {
     delay(4);                                                   //Simulate a 250Hz refresch rate as like the main loop.
   }
   
-  //Serial.println (" Done");
-  
-  //Check if the compass is responding.
-  //Serial.print("COMPASS initialization @ ");
-  //Serial.print(compass_address, HEX);
-    
-  HWire.begin();                                                 //Start the I2C as master
+  HWire.begin();                                                //Start the I2C as master
   HWire.beginTransmission(compass_address);                     //Start communication with the HMC5883L.
   error = HWire.endTransmission();                              //End the transmission and register the exit status.
   while (error != 0) {                                          //Stay in this loop because the HMC5883L did not responde.
@@ -238,19 +223,11 @@ void setup() {
     error_signal();                                             //Show the error via the red LED.
     delay(4);                                                   //Simulate a 250Hz refresch rate as like the main loop.
   }
-  //Serial.println(" Done");
-
-  //Check if the MS5611 barometer is responding.
-  //Serial.print("BAROMETER initialization @ ");
-  //Serial.print(baro_address, HEX);
-
+  
   HWire.begin();                                                //Start the I2C as master
-  HWire.beginTransmission(baro_address);                      //Start communication with the MS5611.
+  HWire.beginTransmission(baro_address);                        //Start communication with the MS5611.
   error = HWire.endTransmission();                              //End the transmission and register the exit status.
   
-  //if (error == 0) Serial.println("Done");
-  //else Serial.println(" NOK");
-
   while (error != 0) {                                          //Stay in this loop because the MS5611 did not responde.
     error = 3;                                                  //Set the error status to 2.
     error_signal();                                             //Show the error via the red LED.
@@ -324,14 +301,16 @@ void setup() {
   if (motor_idle_speed < 1000)motor_idle_speed = 1000;          //Limit the minimum idle motor speed to 1000us.
   if (motor_idle_speed > 1200)motor_idle_speed = 1200;          //Limit the maximum idle motor speed to 1200us.
  
+  receiver_watchdog = 850;                                      // avoid RTH 
+
   loop_timer = micros();                                        //Set the timer for the first loop.
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Main program loop
+//Main program loop1
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop() {
-
+  // activate Return to home on signal loss
   if(receiver_watchdog < 750)receiver_watchdog ++;
   if(receiver_watchdog == 750 && start == 2){
     channel_1 = 1500;
@@ -345,6 +324,7 @@ void loop() {
     }
     else channel_5 = 1500;    
   }
+
   //Some functions are only accessible when the quadcopter is off.
   if (start == 0) {
     //For compass calibration move both sticks to the top right.
@@ -526,10 +506,10 @@ void loop() {
   }
 
   // ADAPTED to my hardware setup / pinout 
-  TIMER4_BASE->CCR1 = esc_3;                                                       //Set the throttle receiver input pulse to the ESC 3 output pulse.
+  TIMER4_BASE->CCR1 = esc_4;                                                       //Set the throttle receiver input pulse to the ESC 4 output pulse.
   TIMER4_BASE->CCR2 = esc_2;                                                       //Set the throttle receiver input pulse to the ESC 2 output pulse.
-  TIMER4_BASE->CCR3 = esc_4;                                                       //Set the throttle receiver input pulse to the ESC 4 output pulse.
-  TIMER4_BASE->CCR4 = esc_1;                                                       //Set the throttle receiver input pulse to the ESC 1 output pulse.
+  TIMER4_BASE->CCR3 = esc_1;                                                       //Set the throttle receiver input pulse to the ESC 1 output pulse.
+  TIMER4_BASE->CCR4 = esc_3;                                                       //Set the throttle receiver input pulse to the ESC 3 output pulse.
   TIMER4_BASE->CNT = 5000;                                                         //This will reset timer 4 and the ESC pulses are directly created.
 
   send_telemetry_data();                                                           //Send telemetry data to the ground station.

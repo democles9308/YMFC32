@@ -2,6 +2,8 @@
 //  global delcarations  //
 ///////////////////////////
 
+#define STM32_board_LED PA1
+
 extern class TwoWire HWire;
 
 extern const uint8_t gyro_address;

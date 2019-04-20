@@ -5,6 +5,16 @@
 #include "Globals.h"
 
 void start_stop_takeoff(void) {
+
+  Serial.print("CH3:");
+  Serial.print(channel_3);
+  Serial.print(" CH4:");
+  Serial.print (channel_4);
+  Serial.print(" WD:");
+  Serial.print (receiver_watchdog);
+  Serial.print(" start:");
+  Serial.println(start);
+
   if (channel_3 < 1050 && channel_4 < 1050)start = 1;                              //For starting the motors: throttle low and yaw left (step 1).
   if (start == 1 && channel_3 < 1050 && channel_4 > 1450) {                        //When yaw stick is back in the center position start the motors (step 2).
     throttle = motor_idle_speed;                                                   //Set the base throttle to the motor_idle_speed variable.
