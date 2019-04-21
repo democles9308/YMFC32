@@ -6,6 +6,7 @@
 
 void start_stop_takeoff(void) {
 
+#if defined(DEBUG)
   Serial.print("CH3:");
   Serial.print(channel_3);
   Serial.print(" CH4:");
@@ -14,6 +15,7 @@ void start_stop_takeoff(void) {
   Serial.print (receiver_watchdog);
   Serial.print(" start:");
   Serial.println(start);
+#endif
 
   if (channel_3 < 1050 && channel_4 < 1050)start = 1;                              //For starting the motors: throttle low and yaw left (step 1).
   if (start == 1 && channel_3 < 1050 && channel_4 > 1450) {                        //When yaw stick is back in the center position start the motors (step 2).

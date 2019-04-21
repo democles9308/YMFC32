@@ -175,6 +175,13 @@ float adjustable_setting_1, adjustable_setting_2, adjustable_setting_3;
 //Setup routine
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup() {
+
+#if defined(DEBUG)
+  Serial.begin(57600);                                        //Set the serial output to 57600 kbps. (for debugging only)
+  delay(2500);                                                 //Give the serial port some time to start to prevent data loss.
+  Serial.println(" ON4CRM DRONE CONTROLLER DEBUG");
+#endif
+
   pinMode(4, INPUT_ANALOG);                                     //This is needed for reading the analog value of port A4 (battery voltage)
   //Port PB3 and PB4 are used as JTDO and JNTRST by default.
   //The following function connects PB3 and PB4 to the
@@ -196,10 +203,6 @@ void setup() {
   EEPROM.PageBase0 = 0x801F000;
   EEPROM.PageBase1 = 0x801F800;
   EEPROM.PageSize  = 0x400;
-
-  Serial.begin(9600);                                        //Set the serial output to 57600 kbps. (for debugging only)
-  delay(2500);                                                 //Give the serial port some time to start to prevent data loss.
-  Serial.println(" ON4CRM DRONE CONTROLLER DEBUG");
 
   timer_setup();                                                //Setup the timers for the receiver inputs and ESC's output.
   delay(50);                                                    //Give the timers some time to start.

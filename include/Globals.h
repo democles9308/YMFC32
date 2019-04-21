@@ -3,6 +3,7 @@
 ///////////////////////////
 
 #define STM32_board_LED PA1
+//#define DEBUG                   // to activate debug code
 
 extern class TwoWire HWire;
 
