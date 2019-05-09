@@ -26,7 +26,17 @@ void gyro_setup(void) {
   HWire.write(0x1A);                                            //We want to write to the CONFIG register (1A hex).
   HWire.write(0x03);                                            //Set the register bits as 00000011 (Set Digital Low Pass Filter to ~43Hz).
   HWire.endTransmission();                                      //End the transmission with the gyro.
+  /*
+  HWire.beginTransmission(gyro_address);                        //Start communication with the MPU-6050.
+  HWire.write(0x37);                                            // activate bypass to get access to onboard HMC5883L
+  HWire.write(0x02);
+  HWire.endTransmission();
 
+  HWire.beginTransmission(gyro_address);
+  HWire.write(0x6A);
+  HWire.write(0x00);
+  HWire.endTransmission(); 
+  */
   acc_pitch_cal_value  = EEPROM.read(0x16);
   acc_roll_cal_value  = EEPROM.read(0x17);
 }
