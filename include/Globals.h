@@ -3,6 +3,12 @@
 ///////////////////////////
 
 #define STM32_board_LED PA1
+
+//Tuning parameters/settings is explained in this video: https://youtu.be/ys-YpOaA2ME
+#define variable_1_to_adjust pid_p_gain_altitude   
+#define variable_2_to_adjust pid_i_gain_altitude  
+#define variable_3_to_adjust pid_d_gain_altitude  
+
 //#define DEBUG                   // to activate debug code
 
 extern class TwoWire HWire;
