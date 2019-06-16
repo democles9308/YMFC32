@@ -7,6 +7,10 @@ I'm using a "core board" https://wiki.cuvoodoo.info/doku.php?id=stm32f1xx on whi
 The mods so far:
 1. Added to extra channels (channel 7 and 8)
 2. The order for the motors has changed due to my hardware setup.
+    Motor 1 > PB9
+    Motor 2 > PB7
+    Motor 3 > PB6
+    Motor 4 > PB8
 3. Had to change the serialport for the GPS comms. On my board it is Serial1!
-4. Had to changed onboard led to PA1 to match my hardware
+4. Had to change the onboard led to PA1 to match my hardware
 

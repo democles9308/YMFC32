@@ -177,7 +177,7 @@ float adjustable_setting_1, adjustable_setting_2, adjustable_setting_3;
 void setup() {
 
 #if defined(DEBUG)
-  Serial.begin(57600);                                        //Set the serial output to 57600 kbps. (for debugging only)
+  Serial.begin(57600);                                         //Set the serial output to 57600 kbps. (for debugging only)
   delay(2500);                                                 //Give the serial port some time to start to prevent data loss.
   Serial.println(" ON4CRM DRONE CONTROLLER DEBUG");
 #endif
