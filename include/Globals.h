@@ -9,7 +9,9 @@
 #define variable_2_to_adjust pid_i_gain_roll  
 #define variable_3_to_adjust pid_d_gain_roll  
 
-//#define DEBUG                   // to activate debug code
+#define DEBUG                   // to activate debug code
+#define DEBUG_CHG
+#define DEBUG_LOOP
 
 extern class TwoWire HWire;
 

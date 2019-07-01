@@ -39,6 +39,17 @@ void change_settings(void) {
     if (channel_4 < 1450)adjustable_setting_3 -= (float)(1450 - channel_4) * 0.000001;
     if (adjustable_setting_3 < 0)adjustable_setting_3 = 0;
     variable_3_to_adjust = adjustable_setting_3;
+
+    #if defined (DEBUG_CHG) 
+      Serial.print("DEBUG Changing Param >");
+      Serial.print(channel_1);
+      Serial.print(" | ");
+      Serial.print(channel_2);
+      Serial.print(" | ");
+      Serial.print(channel_3);
+      Serial.print(" | ");
+      Serial.println(channel_4);
+    #endif
   }
   loop_timer = micros();                                                           //Set the timer for the next loop.
   

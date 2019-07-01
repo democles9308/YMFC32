@@ -376,6 +376,17 @@ void loop() {
 
   read_gps();
 
+  #if defined (DEBUG_LOOP)
+      Serial.print("DEBUG Loop >");
+      Serial.print(channel_1);
+      Serial.print(" | ");
+      Serial.print(channel_2);
+      Serial.print(" | ");
+      Serial.print(channel_3);
+      Serial.print(" | ");
+      Serial.println(channel_4);
+  #endif
+
   //65.5 = 1 deg/sec (check the datasheet of the MPU-6050 for more information).
   gyro_roll_input = (gyro_roll_input * 0.7) + (((float)gyro_roll / 65.5) * 0.3);   //Gyro pid input is deg/sec.
   gyro_pitch_input = (gyro_pitch_input * 0.7) + (((float)gyro_pitch / 65.5) * 0.3);//Gyro pid input is deg/sec.
