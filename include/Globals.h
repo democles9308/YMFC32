@@ -9,9 +9,11 @@
 #define variable_2_to_adjust pid_i_gain_roll  
 #define variable_3_to_adjust pid_d_gain_roll  
 
-#define DEBUG                   // to activate debug code
-#define DEBUG_CHG
-#define DEBUG_LOOP
+//#define DEBUG                   // to activate debug code
+//#define DEBUG_CHG
+//#define DEBUG_LOOP
+//#define DEBUG_ISR
+
 
 extern class TwoWire HWire;
 
@@ -149,6 +151,8 @@ extern uint8_t previous_channel_6;
 extern float adjustable_setting_1, adjustable_setting_2, adjustable_setting_3;
 
 //forward declarations
+void handler_channel_1(void);
+void timer_setup(void);
 void read_barometer(void);
 void calculate_pid(void);
 void calibrate_compass(void); 
@@ -157,7 +161,6 @@ void change_settings(void);
 void gyro_setup(void);
 void gyro_signalen(void);
 void calibrate_gyro(void);
-void handler_channel_1(void);
 void red_led(int8_t level);
 void green_led(int8_t level);
 void blue_led(int8_t level);
@@ -165,11 +168,10 @@ void error_signal(void);
 void flight_mode_signal(void); 
 void read_compass() ;
 void setup_compass() ;
-float course_deviation(float course_b, float course_c);
 void gps_setup(void);
 void read_gps(void);
 void return_to_home(void);
 void send_telemetry_data(void);
 void start_stop_takeoff(void);
-void timer_setup(void);
 void vertical_acceleration_calculations(void);
+float course_deviation(float course_b, float course_c);

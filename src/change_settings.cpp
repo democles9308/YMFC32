@@ -9,7 +9,7 @@
 #include "Globals.h"
 
 void change_settings(void) {
-  
+    
   blue_led(HIGH);
 
   adjustable_setting_1 = variable_1_to_adjust;
@@ -48,10 +48,26 @@ void change_settings(void) {
       Serial.print(" | ");
       Serial.print(channel_3);
       Serial.print(" | ");
-      Serial.println(channel_4);
+      Serial.print(channel_4);
+      Serial.print(" | ");
+      Serial.print(channel_5);
+      Serial.print(" | ");
+      Serial.print(channel_6);
+      Serial.print(" | ");
+      Serial.print(channel_7);
+      Serial.print(" | ");
+      Serial.print(channel_8);
+      Serial.print(" | ");
+      Serial.print(adjustable_setting_1);
+      Serial.print(" | ");
+      Serial.print(adjustable_setting_2);
+      Serial.print(" | ");
+      Serial.println(adjustable_setting_3);
     #endif
   }
+
+  blue_led(LOW);
+  
   loop_timer = micros();                                                           //Set the timer for the next loop.
   
-  blue_led(LOW);
 }

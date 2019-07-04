@@ -195,9 +195,17 @@ void setup() {
   pinMode(STM32_board_LED, OUTPUT);                             //This is the LED on the STM32 board. Used for GPS indication.
   digitalWrite(STM32_board_LED, HIGH);                          //Turn the LED on the STM32 off. The LED function is inverted. Check the STM32 schematic.
 
-  green_led(LOW);                                               //status Leds
-  blue_led(LOW);
-  red_led(HIGH);                                                
+  green_led(HIGH); 
+  delay(500);
+  green_led(LOW);  
+  
+  red_led(HIGH); 
+  delay(500);                                            //status Leds
+  red_led(LOW);
+  
+  blue_led(HIGH); 
+  delay(500);
+  blue_led(LOW);                                                
 
   //EEPROM emulation setup
   EEPROM.PageBase0 = 0x801F000;
@@ -261,7 +269,7 @@ void setup() {
   error = 0;                                                    //Reset the error status to 0.
 
   //When everything is done, turn off the led.
-  red_led(LOW);                                                 //Set output PB3 low.
+  //red_led(LOW);                                                 //Set output PB3 low.
 
   //Load the battery voltage to the battery_voltage variable.
   //The STM32 uses a 12 bit analog to digital converter.
@@ -304,7 +312,7 @@ void setup() {
   if (motor_idle_speed < 1000)motor_idle_speed = 1000;          //Limit the minimum idle motor speed to 1000us.
   if (motor_idle_speed > 1200)motor_idle_speed = 1200;          //Limit the maximum idle motor speed to 1200us.
  
-  receiver_watchdog = 850;                                      // avoid RTH 
+  //receiver_watchdog = 850;                                      // avoid RTH 
 
   loop_timer = micros();                                        //Set the timer for the first loop.
 }
@@ -315,6 +323,7 @@ void setup() {
 void loop() {
   // activate Return to home on signal loss
   if(receiver_watchdog < 750)receiver_watchdog ++;
+  
   if(receiver_watchdog == 750 && start == 2){
     channel_1 = 1500;
     channel_2 = 1500;
@@ -377,14 +386,26 @@ void loop() {
   read_gps();
 
   #if defined (DEBUG_LOOP)
-      Serial.print("DEBUG Loop >");
+      Serial.print("Loop >");
       Serial.print(channel_1);
       Serial.print(" | ");
       Serial.print(channel_2);
       Serial.print(" | ");
       Serial.print(channel_3);
       Serial.print(" | ");
-      Serial.println(channel_4);
+      Serial.print(channel_4);
+      Serial.print(" | ");
+      Serial.print(channel_5);
+      Serial.print(" | ");
+      Serial.print(channel_6);
+      Serial.print(" | ");
+      Serial.print(channel_7);
+      Serial.print(" | ");
+      Serial.print(channel_8);
+      Serial.print(" | ");
+      Serial.print(receiver_watchdog);
+      Serial.print(" | ");
+      Serial.println(flight_mode);
   #endif
 
   //65.5 = 1 deg/sec (check the datasheet of the MPU-6050 for more information).

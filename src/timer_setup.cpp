@@ -9,7 +9,8 @@
 #include "Globals.h"
 
 void timer_setup(void) {
-  Timer2.attachCompare1Interrupt(handler_channel_1);
+  //Timer2.attachCompare1Interrupt(handler_channel_1);
+  Timer2.attachInterrupt(1,handler_channel_1);
   TIMER2_BASE->CR1 = TIMER_CR1_CEN;
   TIMER2_BASE->CR2 = 0;
   TIMER2_BASE->SMCR = 0;
@@ -42,6 +43,7 @@ void timer_setup(void) {
   TIMER4_BASE->CCR2 = 1000;
   TIMER4_BASE->CCR3 = 1000;
   TIMER4_BASE->CCR4 = 1000;
+  
   pinMode(PB6, PWM);
   pinMode(PB7, PWM);
   pinMode(PB8, PWM);

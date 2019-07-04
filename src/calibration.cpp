@@ -9,7 +9,7 @@
 void calibrate_compass(void) {
   compass_calibration_on = 1;                                                //Set the compass_calibration_on variable to disable the adjustment of the raw compass values.
   blue_led(HIGH);                                                            //The red led will indicate that the compass calibration is active.
-  green_led(LOW);                                                            //Turn off the green led as we don't need it.
+                                                              
   while (channel_2 < 1900) {                                                 //Stay in this loop until the pilot lowers the pitch stick of the transmitter.
     send_telemetry_data();                                                   //Send telemetry data to the ground station.
     delayMicroseconds(3700);                                                 //Simulate a 250Hz program loop.
@@ -21,6 +21,7 @@ void calibrate_compass(void) {
     if (compass_y > compass_cal_values[3])compass_cal_values[3] = compass_y;
     if (compass_z < compass_cal_values[4])compass_cal_values[4] = compass_z;
     if (compass_z > compass_cal_values[5])compass_cal_values[5] = compass_z;
+      
   }
   compass_calibration_on = 0;                                                //Reset the compass_calibration_on variable.
 
@@ -32,6 +33,7 @@ void calibrate_compass(void) {
   angle_yaw = actual_compass_heading;                                        //Set the initial compass heading.
 
   blue_led(LOW);
+
   for (error = 0; error < 15; error ++) {
     green_led(HIGH);
     delay(50);
@@ -52,8 +54,9 @@ void calibrate_level(void) {
     send_telemetry_data();                                                   //Send telemetry data to the ground station.
     delay(10);
   }
+
   blue_led(HIGH);
-  green_led(LOW);
+  
 
   acc_pitch_cal_value = 0;
   acc_roll_cal_value = 0;
