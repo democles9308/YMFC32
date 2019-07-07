@@ -195,12 +195,12 @@ void setup() {
   pinMode(STM32_board_LED, OUTPUT);                             //This is the LED on the STM32 board. Used for GPS indication.
   digitalWrite(STM32_board_LED, HIGH);                          //Turn the LED on the STM32 off. The LED function is inverted. Check the STM32 schematic.
 
-  green_led(HIGH); 
+  green_led(HIGH);                                              //status Leds check
   delay(500);
   green_led(LOW);  
   
   red_led(HIGH); 
-  delay(500);                                            //status Leds
+  delay(500);
   red_led(LOW);
   
   blue_led(HIGH); 
@@ -253,7 +253,7 @@ void setup() {
   //Create a 5 second delay before calibration.
   for (count_var = 0; count_var < 1250; count_var++) {          //1250 loops of 4 microseconds = 5 seconds.
     if (count_var % 125 == 0) {                                 //Every 125 loops (500ms).
-      digitalWrite(PB3, !digitalRead(PB3));                     //Change the (red)led status.
+      digitalWrite(PB5, !digitalRead(PB5));                     //Change the (red)led status.
     }
     delay(4);                                                   //Simulate a 250Hz refresch rate as like the main loop.
   }

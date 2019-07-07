@@ -5,10 +5,10 @@
 //These functions handle the red and green LEDs. 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void red_led(int8_t level) {
-  digitalWrite(PB3,!level);    //!level voorled op opshield
+  digitalWrite(PB5,!level);    //!level voorled op opshield
 }
 void green_led(int8_t level) {
-  digitalWrite(PB5,!level);
+  digitalWrite(PB3,!level);
 }
 void blue_led(int8_t level) {
   digitalWrite(PB4,!level);
