@@ -541,10 +541,10 @@ void loop() {
   }
 
   // ADAPTED to my hardware setup / pinout 
-  TIMER4_BASE->CCR1 = esc_2;                                                       //Set the throttle receiver input pulse to the ESC 3 output pulse.
-  TIMER4_BASE->CCR2 = esc_3;                                                       //Set the throttle receiver input pulse to the ESC 2 output pulse.
-  TIMER4_BASE->CCR3 = esc_1;                                                       //Set the throttle receiver input pulse to the ESC 4 output pulse.
-  TIMER4_BASE->CCR4 = esc_4;                                                       //Set the throttle receiver input pulse to the ESC 1 output pulse.
+  TIMER4_BASE->CCR1 = esc_2;                                                       //Set the throttle receiver input pulse to the ESC 2 output pulse.
+  TIMER4_BASE->CCR2 = esc_3;                                                       //Set the throttle receiver input pulse to the ESC 3 output pulse.
+  TIMER4_BASE->CCR3 = esc_1;                                                       //Set the throttle receiver input pulse to the ESC 1 output pulse.
+  TIMER4_BASE->CCR4 = esc_4;                                                       //Set the throttle receiver input pulse to the ESC 4 output pulse.
   TIMER4_BASE->CNT = 5000;                                                         //This will reset timer 4 and the ESC pulses are directly created.
 
   send_telemetry_data();                                                           //Send telemetry data to the ground station.
