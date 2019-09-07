@@ -67,9 +67,10 @@ extern int16_t temperature, count_var;
 extern int16_t acc_x, acc_y, acc_z;
 extern int16_t gyro_pitch, gyro_roll, gyro_yaw;
 
-extern int32_t channel_1, channel_1_base, pid_roll_setpoint_base;
-extern int32_t channel_2, channel_2_base, pid_pitch_setpoint_base;
+extern int32_t channel_1, channel_1_start, channel_1_base, pid_roll_setpoint_base;
+extern int32_t channel_2, channel_2_start, channel_2_base, pid_pitch_setpoint_base;
 extern int32_t channel_3, channel_4, channel_5, channel_6, channel_7, channel_8;
+extern int32_t channel_3_start,channel_4_start,channel_5_start,channel_6_start,channel_7_start,channel_8_start;
 extern int32_t measured_time, measured_time_start, receiver_watchdog;
 extern int32_t acc_total_vector, acc_total_vector_at_start;
 extern int32_t gyro_roll_cal, gyro_pitch_cal, gyro_yaw_cal;
@@ -83,6 +84,7 @@ extern uint8_t acc_z_average_short_rotating_mem_location, acc_z_average_long_rot
 extern int32_t acc_alt_integrated;
 
 extern uint32_t loop_timer, error_timer, flight_mode_timer;
+extern uint32_t delay_micros_timer;
 
 extern float roll_level_adjust, pitch_level_adjust;
 extern float pid_error_temp;
@@ -144,6 +146,21 @@ extern float return_to_home_lat_factor, return_to_home_lon_factor, return_to_hom
 extern uint8_t home_point_recorded;
 extern int32_t lat_gps_home, lon_gps_home;
 
+//Software Serial data input handling
+extern uint8_t si_check_byte;
+//uint8_t temp_byte;
+extern int8_t si_rising_edge_set;
+extern int16_t si_time_array[200];
+extern int8_t si_print_flag;
+extern uint8_t si_time_array_counter, si_time_array_counter_2, si_received_bytes_counter;
+extern uint8_t si_received_bytes[30], si_level, si_byte_counter, new_waypoint_available;
+extern int32_t wp_lat_gps, wp_lon_gps;
+extern int32_t si_measured_time, si_measured_time_start, si_last_input_change, si_last_input_change_previous;
+
+//Fly waypoints
+extern uint8_t fly_to_new_waypoint, fly_to_new_waypoint_step, waypoint_monitor;
+extern float fly_to_waypoint_move_factor, fly_to_waypoint_lat_factor, fly_to_waypoint_lon_factor;
+
 //Adjust settings online
 extern uint32_t setting_adjust_timer;
 extern uint16_t setting_click_counter;
@@ -175,3 +192,6 @@ void send_telemetry_data(void);
 void start_stop_takeoff(void);
 void vertical_acceleration_calculations(void);
 float course_deviation(float course_b, float course_c);
+void si_translate_bytes(void);
+void Serial_input_handler(void);
+void fly_waypoints(void);

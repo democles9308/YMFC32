@@ -87,9 +87,10 @@ int16_t temperature, count_var;
 int16_t acc_x, acc_y, acc_z;
 int16_t gyro_pitch, gyro_roll, gyro_yaw;
 
-int32_t channel_1, channel_1_base, pid_roll_setpoint_base;
-int32_t channel_2, channel_2_base, pid_pitch_setpoint_base;
+int32_t channel_1_start,channel_1, channel_1_base, pid_roll_setpoint_base;
+int32_t channel_2_start,channel_2, channel_2_base, pid_pitch_setpoint_base;
 int32_t channel_3, channel_4, channel_5, channel_6, channel_7, channel_8;
+int32_t channel_3_start,channel_4_start,channel_5_start,channel_6_start,channel_7_start,channel_8_start;
 int32_t measured_time, measured_time_start, receiver_watchdog;
 
 int32_t acc_total_vector, acc_total_vector_at_start;
@@ -103,8 +104,8 @@ int16_t acc_z_average_short[26], acc_z_average_long[51];
 uint8_t acc_z_average_short_rotating_mem_location, acc_z_average_long_rotating_mem_location;
 
 int32_t acc_alt_integrated;
-
 uint32_t loop_timer, error_timer, flight_mode_timer;
+uint32_t delay_micros_timer;
 
 float roll_level_adjust, pitch_level_adjust;
 float pid_error_temp;
@@ -165,6 +166,21 @@ float return_to_home_lat_factor, return_to_home_lon_factor, return_to_home_move_
 uint8_t home_point_recorded;
 int32_t lat_gps_home, lon_gps_home;
 
+//Software Serial data input handling
+uint8_t si_check_byte;
+//uint8_t temp_byte;
+int8_t si_rising_edge_set;
+int16_t si_time_array[200];
+int8_t si_print_flag = 1;
+uint8_t si_time_array_counter, si_time_array_counter_2, si_received_bytes_counter;
+uint8_t si_received_bytes[30], si_level, si_byte_counter, new_waypoint_available;
+int32_t wp_lat_gps, wp_lon_gps;
+int32_t si_measured_time, si_measured_time_start, si_last_input_change, si_last_input_change_previous;
+
+//Fly waypoints
+uint8_t fly_to_new_waypoint, fly_to_new_waypoint_step, waypoint_monitor;
+float fly_to_waypoint_move_factor, fly_to_waypoint_lat_factor, fly_to_waypoint_lon_factor;
+
 //Adjust settings online
 uint32_t setting_adjust_timer;
 uint16_t setting_click_counter;
@@ -216,7 +232,8 @@ void setup() {
   delay(50);                                                    //Give the timers some time to start.
 
   gps_setup();                                                  //Set the baud rate and output refreshrate of the GPS module.
-
+  
+  //Check if the MPU-6050 is responding.
   HWire.begin();                                                //Start the I2C as master
   HWire.beginTransmission(gyro_address);                        //Start communication with the MPU-6050.
   error = HWire.endTransmission();                              //End the transmission and register the exit status.
@@ -225,7 +242,8 @@ void setup() {
     error_signal();                                             //Show the error via the red LED.
     delay(4);                                                   //Simulate a 250Hz refresch rate as like the main loop.
   }
-  
+
+  //Check if the compass is responding.
   HWire.begin();                                                //Start the I2C as master
   HWire.beginTransmission(compass_address);                     //Start communication with the HMC5883L.
   error = HWire.endTransmission();                              //End the transmission and register the exit status.
@@ -234,7 +252,8 @@ void setup() {
     error_signal();                                             //Show the error via the red LED.
     delay(4);                                                   //Simulate a 250Hz refresch rate as like the main loop.
   }
-  
+
+  //Check if the barometer is responding.
   HWire.begin();                                                //Start the I2C as master
   HWire.beginTransmission(baro_address);                        //Start communication with the MS5611.
   error = HWire.endTransmission();                              //End the transmission and register the exit status.
@@ -368,18 +387,21 @@ void loop() {
     else flight_mode = 3;
   }
 
-  if (flight_mode <= 3) {
+  if (flight_mode !=4) {
     return_to_home_step = 0;
     return_to_home_lat_factor = 0;
     return_to_home_lon_factor = 0;
   }
 
+  //Run some subroutines
+  fly_waypoints();                                                                 //Jump to the fly waypoint step program.
   return_to_home();                                                                //Jump to the return to home step program.
   flight_mode_signal();                                                            //Show the flight_mode via the green LED.
   error_signal();                                                                  //Show the error via the red LED.
   gyro_signalen();                                                                 //Read the gyro and accelerometer data.
   read_barometer();                                                                //Read and calculate the barometer data.
   read_compass();                                                                  //Read and calculate the compass data.
+  si_translate_bytes();
   
   if (gps_add_counter >= 0)gps_add_counter --;
 
