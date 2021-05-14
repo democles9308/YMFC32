@@ -7,8 +7,5 @@
     "telemetry.enableCrashReporter": false,
     "telemetry.enableTelemetry": false,
     "C_Cpp.default.cStandard": "c11",
-    "C_Cpp.default.intelliSenseMode": "gcc-x64",
-    "cortex-debug.enableTelemetry": false,
-    "cortex-debug.armToolchainPath": "/home/democles/opt/gnu-mcu-eclipse/arm-none-eabi-gcc/8.2.1-1.4-20190214-0604/bin/",
-    "cortex-debug.openocdPath": "/home/democles/opt/gnu-mcu-eclipse/openocd/0.10.0-10-20181020-0522/bin/openocd"
+    "C_Cpp.default.intelliSenseMode": "gcc-x64"
 }

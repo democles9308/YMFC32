@@ -322,16 +322,17 @@ void setup() {
   actual_pressure = 0;                                          //Reset the pressure calculations.
 
   //Before starting the avarage accelerometer value is preloaded into the variables.
-  for (start = 0; start <= 24; start++)acc_z_average_short[start] = acc_z;
-  for (start = 0; start <= 49; start++)acc_z_average_long[start] = acc_z;
+  for (start = 0; start <= 24; start++) acc_z_average_short[start] = acc_z;
+  for (start = 0; start <= 49; start++) acc_z_average_long[start] = acc_z;
   acc_z_average_short_total = acc_z * 25;
   acc_z_average_long_total = acc_z * 50;
+  
   start = 0;
 
-  if (motor_idle_speed < 1000)motor_idle_speed = 1000;          //Limit the minimum idle motor speed to 1000us.
-  if (motor_idle_speed > 1200)motor_idle_speed = 1200;          //Limit the maximum idle motor speed to 1200us.
+  if (motor_idle_speed < 1000) motor_idle_speed = 1000;         //Limit the minimum idle motor speed to 1000us.
+  if (motor_idle_speed > 1200) motor_idle_speed = 1200;         //Limit the maximum idle motor speed to 1200us.
  
-  //receiver_watchdog = 850;                                      // avoid RTH 
+  //receiver_watchdog = 850;                                    // avoid RTH 
 
   loop_timer = micros();                                        //Set the timer for the first loop.
 }
@@ -341,7 +342,7 @@ void setup() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop() {
   // activate Return to home on signal loss
-  if(receiver_watchdog < 750)receiver_watchdog ++;
+  if(receiver_watchdog < 750) receiver_watchdog++;
   
   if(receiver_watchdog == 750 && start == 2){
     channel_1 = 1500;
@@ -350,7 +351,7 @@ void loop() {
     channel_4 = 1500;
     error = 8;
     if (number_used_sats > 5){
-      if(home_point_recorded == 1)channel_5 = 2000;
+      if(home_point_recorded == 1) channel_5 = 2000;
       else channel_5 = 1750;
     }
     else channel_5 = 1500;    
@@ -359,9 +360,9 @@ void loop() {
   //Some functions are only accessible when the quadcopter is off.
   if (start == 0) {
     //For compass calibration move both sticks to the top right.
-    if (channel_1 > 1900 && channel_2 < 1100 && channel_3 > 1900 && channel_4 > 1900)calibrate_compass();
+    if (channel_1 > 1900 && channel_2 < 1100 && channel_3 > 1900 && channel_4 > 1900) calibrate_compass();
     //Level calibration move both sticks to the top left.
-    if (channel_1 < 1100 && channel_2 < 1100 && channel_3 > 1900 && channel_4 < 1100)calibrate_level();
+    if (channel_1 < 1100 && channel_2 < 1100 && channel_3 > 1900 && channel_4 < 1100) calibrate_level();
     //Change settings
     if (channel_6 >= 1900 && previous_channel_6 == 0) {
       previous_channel_6 = 1;
@@ -373,17 +374,17 @@ void loop() {
         change_settings();
       }
     }
-    if (channel_6 < 1900)previous_channel_6 = 0;
+    if (channel_6 < 1900) previous_channel_6 = 0;
   }
 
   heading_lock = 0;
-  if (channel_6 > 1200)heading_lock = 1;                                           //If channel 6 is between 1200us and 1600us the flight mode is 2
+  if (channel_6 > 1200) heading_lock = 1;                                           //If channel 6 is between 1200us and 1600us the flight mode is 2
 
-  flight_mode = 1;                                                                 //In all other situations the flight mode is 1;
-  if (channel_5 >= 1200 && channel_5 < 1600)flight_mode = 2;                       //If channel 6 is between 1200us and 1600us the flight mode is 2
-  if (channel_5 >= 1600 && channel_5 < 1950)flight_mode = 3;                       //If channel 6 is between 1600us and 1900us the flight mode is 3
+  flight_mode = 1;                                                                  //In all other situations the flight mode is 1;
+  if (channel_5 >= 1200 && channel_5 < 1600) flight_mode = 2;                       //If channel 5 is between 1200us and 1600us the flight mode is 2
+  if (channel_5 >= 1600 && channel_5 < 1950) flight_mode = 3;                       //If channel 5 is between 1600us and 1900us the flight mode is 3
   if (channel_5 >= 1950 && channel_5 < 2100) {
-    if (waypoint_set == 1 && home_point_recorded == 1 && start == 2)flight_mode = 4;
+    if (waypoint_set == 1 && home_point_recorded == 1 && start == 2) flight_mode = 4;
     else flight_mode = 3;
   }
 
@@ -403,7 +404,7 @@ void loop() {
   read_compass();                                                                  //Read and calculate the compass data.
   si_translate_bytes();
   
-  if (gps_add_counter >= 0)gps_add_counter --;
+  if (gps_add_counter >= 0) gps_add_counter--;
 
   read_gps();
 
@@ -500,10 +501,10 @@ void loop() {
   }
 
   //Because we added the GPS adjust values we need to make sure that the control limits are not exceded.
-  if (pid_roll_setpoint_base > 2000)pid_roll_setpoint_base = 2000;
-  if (pid_roll_setpoint_base < 1000)pid_roll_setpoint_base = 1000;
-  if (pid_pitch_setpoint_base > 2000)pid_pitch_setpoint_base = 2000;
-  if (pid_pitch_setpoint_base < 1000)pid_pitch_setpoint_base = 1000;
+  if (pid_roll_setpoint_base > 2000) pid_roll_setpoint_base = 2000;
+  if (pid_roll_setpoint_base < 1000) pid_roll_setpoint_base = 1000;
+  if (pid_pitch_setpoint_base > 2000) pid_pitch_setpoint_base = 2000;
+  if (pid_pitch_setpoint_base < 1000) pid_pitch_setpoint_base = 1000;
 
   calculate_pid();                                                                 //Calculate the pid outputs based on the receiver inputs.
 
@@ -515,7 +516,7 @@ void loop() {
   battery_voltage = battery_voltage * 0.92 + ((float)analogRead(4) / 1410.1);
 
   //Turn on the led if battery voltage is to low. Default setting is 10.5V
-  if (battery_voltage > 6.0 && battery_voltage < low_battery_warning && error == 0)error = 1;
+  if (battery_voltage > 6.0 && battery_voltage < low_battery_warning && error == 0) error = 1;
 
   //The variable base_throttle is calculated in the following part. It forms the base throttle for every motor.
   if (takeoff_detected == 1 && start == 2) {                                         //If the quadcopter is started and flying.
@@ -578,7 +579,7 @@ void loop() {
   //the Q&A page:
   //! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !
       
-  if (micros() - loop_timer > 4050)error = 2;                                      //Output an error if the loop time exceeds 4050us.
+  if (micros() - loop_timer > 4050) error = 2;                                      //Output an error if the loop time exceeds 4050us.
   while (micros() - loop_timer < 4000);                                            //We wait until 4000us are passed.
   
   loop_timer = micros();                                                           //Set the timer for the next loop.

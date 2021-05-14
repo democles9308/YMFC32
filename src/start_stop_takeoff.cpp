@@ -6,7 +6,7 @@
 
 void start_stop_takeoff(void) {
 
-  if (channel_3 < 1050 && channel_4 < 1050)start = 1;                              //For starting the motors: throttle low and yaw left (step 1).
+  if (channel_3 < 1050 && channel_4 < 1050) start = 1;                              //For starting the motors: throttle low and yaw left (step 1).
   if (start == 1 && channel_3 < 1050 && channel_4 > 1450) {                        //When yaw stick is back in the center position start the motors (step 2).
     throttle = motor_idle_speed;                                                   //Set the base throttle to the motor_idle_speed variable.
     angle_pitch = angle_pitch_acc;                                                 //Set the gyro pitch angle equal to the accelerometer pitch angle when the quadcopter is started.
@@ -14,7 +14,9 @@ void start_stop_takeoff(void) {
     ground_pressure = actual_pressure;                                             //Register the pressure at ground level for altitude calculations.
     course_lock_heading = angle_yaw;                                               //Set the current compass heading as the course lock heading.
     acc_total_vector_at_start = acc_total_vector;                                  //Register the acceleration when the quadcopter is started.
+   
     start = 2;                                                                     //Set the start variable to 2 to indicate that the quadcopter is started.
+   
     acc_alt_integrated = 0;                                                        //Reset the integrated acceleration value.
     if (manual_takeoff_throttle > 1400 && manual_takeoff_throttle < 1600) {        //If the manual hover throttle is used and valid (between 1400us and 1600us pulse).
       takeoff_throttle = manual_takeoff_throttle - 1500;                           //Use the manual hover throttle.
@@ -44,9 +46,9 @@ void start_stop_takeoff(void) {
 
   if (takeoff_detected == 0 && start == 2) {                                       //When the quadcopter is started and no take-off is detected.
     if (channel_3 > 1480 && throttle < 1750) throttle++;                           //When the throttle is half way or higher, increase the throttle.
-    if (throttle == 1750)error = 6;                                                //If take-off is not detected when the throttle has reached 1700: error = 6.
+    if (throttle == 1750) error = 6;                                               //If take-off is not detected when the throttle has reached 1700: error = 6.
     if (channel_3 <= 1480) {                                                       //When the throttle is below the center stick position.
-      if (throttle > motor_idle_speed)throttle--;                                  //Lower the throttle to the motor_idle_speed variable.
+      if (throttle > motor_idle_speed) throttle--;                                 //Lower the throttle to the motor_idle_speed variable.
       //Reset the PID controllers for a smooth take-off.
       else {                                                                       //When the throttle is back at idle speed reset the PID controllers.
         pid_i_mem_roll = 0;

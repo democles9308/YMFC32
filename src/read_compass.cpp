@@ -51,7 +51,7 @@ void setup_compass() {
   HWire.endTransmission();                                      //End the transmission with the compass.
 
 //Read the calibration values from the EEPROM.
-  for (error = 0; error < 6; error ++)compass_cal_values[error] = EEPROM.read(0x10 + error);
+  for (error = 0; error < 6; error ++) compass_cal_values[error] = EEPROM.read(0x10 + error);
   error = 0;
 //Calculate the calibration offset and scale values
   compass_scale_y = ((float)compass_cal_values[1] - compass_cal_values[0]) / (compass_cal_values[3] - compass_cal_values[2]);

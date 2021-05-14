@@ -15,12 +15,12 @@ void calibrate_compass(void) {
     delayMicroseconds(3700);                                                 //Simulate a 250Hz program loop.
     read_compass();                                                          //Read the raw compass values.
     //In the following lines the maximum and minimum compass values are detected and stored.
-    if (compass_x < compass_cal_values[0])compass_cal_values[0] = compass_x;
-    if (compass_x > compass_cal_values[1])compass_cal_values[1] = compass_x;
-    if (compass_y < compass_cal_values[2])compass_cal_values[2] = compass_y;
-    if (compass_y > compass_cal_values[3])compass_cal_values[3] = compass_y;
-    if (compass_z < compass_cal_values[4])compass_cal_values[4] = compass_z;
-    if (compass_z > compass_cal_values[5])compass_cal_values[5] = compass_z;
+    if (compass_x < compass_cal_values[0]) compass_cal_values[0] = compass_x;
+    if (compass_x > compass_cal_values[1]) compass_cal_values[1] = compass_x;
+    if (compass_y < compass_cal_values[2]) compass_cal_values[2] = compass_y;
+    if (compass_y > compass_cal_values[3]) compass_cal_values[3] = compass_y;
+    if (compass_z < compass_cal_values[4]) compass_cal_values[4] = compass_z;
+    if (compass_z > compass_cal_values[5]) compass_cal_values[5] = compass_z;
       
   }
   compass_calibration_on = 0;                                                //Reset the compass_calibration_on variable.
@@ -66,8 +66,8 @@ void calibrate_level(void) {
     gyro_signalen();
     acc_pitch_cal_value += acc_y;
     acc_roll_cal_value += acc_x;
-    if (acc_y > 500 || acc_y < -500)error = 80;
-    if (acc_x > 500 || acc_x < -500)error = 80;
+    if (acc_y > 500 || acc_y < -500) error = 80;
+    if (acc_x > 500 || acc_x < -500) error = 80;
     delayMicroseconds(3700);
   }
 
