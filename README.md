@@ -10,9 +10,9 @@ CH2: Pitch (E)
 CH3: Throttle (T)
 CH4: Yaw (R)
 CH5: Arm (start=1)
-CH6:Flightmode
+CH6: Flightmode (FM1-3)
 CH7: head lock
-CH8: beeper
+CH8: beeper ( still to implement)
 
 The mods so far:
 1. Added two additional channels (channel 7 and 8)
