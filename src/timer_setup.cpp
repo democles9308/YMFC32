@@ -44,9 +44,5 @@ void timer_setup(void) {
   TIMER4_BASE->CCR3 = 1000;
   TIMER4_BASE->CCR4 = 1000;
   
-  pinMode(PB6, PWM);
-  pinMode(PB7, PWM);
-  pinMode(PB8, PWM);
-  pinMode(PB9, PWM);
 }
 

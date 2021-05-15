@@ -8,7 +8,7 @@
 
 void calibrate_compass(void) {
   compass_calibration_on = 1;                                                //Set the compass_calibration_on variable to disable the adjustment of the raw compass values.
-  blue_led(HIGH);                                                            //The red led will indicate that the compass calibration is active.
+  blue_led(HIGH);                                                            //The blue led will indicate that the compass calibration is active.
                                                               
   while (channel_2 < 1900) {                                                 //Stay in this loop until the pilot lowers the pitch stick of the transmitter.
     send_telemetry_data();                                                   //Send telemetry data to the ground station.
@@ -75,6 +75,7 @@ void calibrate_level(void) {
   acc_roll_cal_value /= 64;
 
   blue_led(LOW);
+  
   if (error < 80) {
     EEPROM.write(0x16, acc_pitch_cal_value);
     EEPROM.write(0x17, acc_roll_cal_value);

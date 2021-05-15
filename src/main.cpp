@@ -90,7 +90,7 @@ int16_t gyro_pitch, gyro_roll, gyro_yaw;
 int32_t channel_1_start,channel_1, channel_1_base, pid_roll_setpoint_base;
 int32_t channel_2_start,channel_2, channel_2_base, pid_pitch_setpoint_base;
 int32_t channel_3, channel_4, channel_5, channel_6, channel_7, channel_8;
-int32_t channel_3_start,channel_4_start,channel_5_start,channel_6_start,channel_7_start,channel_8_start;
+int32_t channel_3_start,channel_4_start,channel_5_start,channel_6_start,previous_channel_7;
 int32_t measured_time, measured_time_start, receiver_watchdog;
 
 int32_t acc_total_vector, acc_total_vector_at_start;
@@ -166,7 +166,7 @@ float return_to_home_lat_factor, return_to_home_lon_factor, return_to_home_move_
 uint8_t home_point_recorded;
 int32_t lat_gps_home, lon_gps_home;
 
-//Software Serial data input handling
+//Software Serial1 data input handling
 uint8_t si_check_byte;
 //uint8_t temp_byte;
 int8_t si_rising_edge_set;
@@ -193,9 +193,9 @@ float adjustable_setting_1, adjustable_setting_2, adjustable_setting_3;
 void setup() {
 
 #if defined(DEBUG)
-  Serial.begin(57600);                                         //Set the serial output to 57600 kbps. (for debugging only)
+  Serial1.begin(57600);                                         //Set the serial output to 57600 kbps. (for debugging only)
   delay(2500);                                                 //Give the serial port some time to start to prevent data loss.
-  Serial.println(" ON4CRM DRONE CONTROLLER DEBUG");
+  Serial1.println(" ON4CRM DRONE CONTROLLER DEBUG");
 #endif
 
   pinMode(4, INPUT_ANALOG);                                     //This is needed for reading the analog value of port A4 (battery voltage)
@@ -205,12 +205,23 @@ void setup() {
   afio_cfg_debug_ports(AFIO_DEBUG_SW_ONLY);                     //Connects PB3 and PB4 to output function.
   
   pinMode(PB0, OUTPUT);                                         //Set PB0 as output for telemetry TX.
-  pinMode(PB3, OUTPUT);                                         //Set PB3 as output for red LED.
+  pinMode(PB3, OUTPUT);                                         //Set PB3 as output for gree LED.
   pinMode(PB4, OUTPUT);                                         //Set PB4 as output for blue LED.
-  pinMode(PB5, OUTPUT);                                         //Set PB5 as output for green LED.
-  pinMode(STM32_board_LED, OUTPUT);                             //This is the LED on the STM32 board. Used for GPS indication.
-  digitalWrite(STM32_board_LED, HIGH);                          //Turn the LED on the STM32 off. The LED function is inverted. Check the STM32 schematic.
+  pinMode(PB5, OUTPUT);                                         //Set PB5 as output for red LED.
+  
+  pinMode(PB6, PWM);
+  pinMode(PB7, PWM);
+  pinMode(PB8, PWM);
+  pinMode(PB9, PWM);
 
+  pinMode(STM32_board_LED, OUTPUT);                             //This is the LED on the STM32 board. Used for GPS indication.
+  digitalWrite(STM32_board_LED, LOW);                           //Turn the LED on the STM32 off.
+
+  green_led(LOW); 
+  red_led(LOW);
+  blue_led(LOW);
+
+/*
   green_led(HIGH);                                              //status Leds check
   delay(500);
   green_led(LOW);  
@@ -218,9 +229,10 @@ void setup() {
   red_led(HIGH); 
   delay(500);
   red_led(LOW);
-  
+ */ 
+
   blue_led(HIGH); 
-  delay(500);
+  delay(1500);
   blue_led(LOW);                                                
 
   //EEPROM emulation setup
@@ -272,7 +284,7 @@ void setup() {
   //Create a 5 second delay before calibration.
   for (count_var = 0; count_var < 1250; count_var++) {          //1250 loops of 4 microseconds = 5 seconds.
     if (count_var % 125 == 0) {                                 //Every 125 loops (500ms).
-      digitalWrite(PB5, !digitalRead(PB5));                     //Change the (red)led status.
+      digitalWrite(PB4, !digitalRead(PB4));                     //Change the (red)led status.
     }
     delay(4);                                                   //Simulate a 250Hz refresch rate as like the main loop.
   }
@@ -351,10 +363,10 @@ void loop() {
     channel_4 = 1500;
     error = 8;
     if (number_used_sats > 5){
-      if(home_point_recorded == 1) channel_5 = 2000;
-      else channel_5 = 1750;
+      if(home_point_recorded == 1) channel_6 = 2000;
+      else channel_6 = 1750;
     }
-    else channel_5 = 1500;    
+    else channel_6 = 1500;    
   }
 
   //Some functions are only accessible when the quadcopter is off.
@@ -364,8 +376,8 @@ void loop() {
     //Level calibration move both sticks to the top left.
     if (channel_1 < 1100 && channel_2 < 1100 && channel_3 > 1900 && channel_4 < 1100) calibrate_level();
     //Change settings
-    if (channel_6 >= 1900 && previous_channel_6 == 0) {
-      previous_channel_6 = 1;
+    if (channel_7 >= 1900 && previous_channel_7 == 0) {
+      previous_channel_7 = 1;
       if (setting_adjust_timer > millis())setting_click_counter ++;
       else setting_click_counter = 0;
       setting_adjust_timer = millis() + 1000;
@@ -374,16 +386,16 @@ void loop() {
         change_settings();
       }
     }
-    if (channel_6 < 1900) previous_channel_6 = 0;
+    if (channel_7 < 1900) previous_channel_7 = 0;
   }
 
   heading_lock = 0;
-  if (channel_6 > 1200) heading_lock = 1;                                           //If channel 6 is between 1200us and 1600us the flight mode is 2
+  if (channel_7 > 1200) heading_lock = 1;                                           //If channel 6 is between 1200us and 1600us the flight mode is 2
 
   flight_mode = 1;                                                                  //In all other situations the flight mode is 1;
-  if (channel_5 >= 1200 && channel_5 < 1600) flight_mode = 2;                       //If channel 5 is between 1200us and 1600us the flight mode is 2
-  if (channel_5 >= 1600 && channel_5 < 1950) flight_mode = 3;                       //If channel 5 is between 1600us and 1900us the flight mode is 3
-  if (channel_5 >= 1950 && channel_5 < 2100) {
+  if (channel_6 >= 1200 && channel_6 < 1600) flight_mode = 2;                       //If channel 5 is between 1200us and 1600us the flight mode is 2
+  if (channel_6 >= 1600 && channel_6 < 1950) flight_mode = 3;                       //If channel 5 is between 1600us and 1900us the flight mode is 3
+  if (channel_6 >= 1950 && channel_6 < 2100) {
     if (waypoint_set == 1 && home_point_recorded == 1 && start == 2) flight_mode = 4;
     else flight_mode = 3;
   }
@@ -409,26 +421,26 @@ void loop() {
   read_gps();
 
   #if defined (DEBUG_LOOP)
-      Serial.print("Loop >");
-      Serial.print(channel_1);
-      Serial.print(" | ");
-      Serial.print(channel_2);
-      Serial.print(" | ");
-      Serial.print(channel_3);
-      Serial.print(" | ");
-      Serial.print(channel_4);
-      Serial.print(" | ");
-      Serial.print(channel_5);
-      Serial.print(" | ");
-      Serial.print(channel_6);
-      Serial.print(" | ");
-      Serial.print(channel_7);
-      Serial.print(" | ");
-      Serial.print(channel_8);
-      Serial.print(" | ");
-      Serial.print(receiver_watchdog);
-      Serial.print(" | ");
-      Serial.println(flight_mode);
+      Serial1.print("Loop > CH1: ");
+      Serial1.print(channel_1);
+      Serial1.print(" | CH2: ");
+      Serial1.print(channel_2);
+      Serial1.print(" | CH3: ");
+      Serial1.print(channel_3);
+      Serial1.print(" | CH4: ");
+      Serial1.print(channel_4);
+      Serial1.print(" | CH5: ");
+      Serial1.print(channel_5);
+      Serial1.print(" | CH6: ");
+      Serial1.print(channel_6);
+      Serial1.print(" | CH7: ");
+      Serial1.print(channel_7);
+      Serial1.print(" | CH8: ");
+      Serial1.print(channel_8);
+      Serial1.print(" | FM:");
+      Serial1.print(flight_mode);
+      Serial1.print(" | WD: ");
+      Serial1.println(receiver_watchdog);
   #endif
 
   //65.5 = 1 deg/sec (check the datasheet of the MPU-6050 for more information).

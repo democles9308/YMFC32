@@ -8,7 +8,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void handler_channel_1(void) {
   measured_time = TIMER2_BASE->CCR1 - measured_time_start;
-  if (measured_time < 0)measured_time += 0xFFFF;
+  if (measured_time < 0) measured_time += 0xFFFF;
   measured_time_start = TIMER2_BASE->CCR1;
   
   if (measured_time > 3000) {
@@ -27,11 +27,10 @@ void handler_channel_1(void) {
   if (channel_select_counter == 8)channel_8 = measured_time;
 
   #if defined (DEBUG_ISR) 
-      Serial.print(">");
-      Serial.print(channel_select_counter);
-      Serial.print(" | ");
-      Serial.println(measured_time);
-           
-    #endif
+      Serial1.print(">");
+      Serial1.print(channel_select_counter);
+      Serial1.print(" | ");
+      Serial1.println(measured_time);      
+  #endif
 }
 

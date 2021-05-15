@@ -41,28 +41,28 @@ void change_settings(void) {
     variable_3_to_adjust = adjustable_setting_3;
 
     #if defined (DEBUG_CHG) 
-      Serial.print("DEBUG Changing Param >");
-      Serial.print(channel_1);
-      Serial.print(" | ");
-      Serial.print(channel_2);
-      Serial.print(" | ");
-      Serial.print(channel_3);
-      Serial.print(" | ");
-      Serial.print(channel_4);
-      Serial.print(" | ");
-      Serial.print(channel_5);
-      Serial.print(" | ");
-      Serial.print(channel_6);
-      Serial.print(" | ");
-      Serial.print(channel_7);
-      Serial.print(" | ");
-      Serial.print(channel_8);
-      Serial.print(" | ");
-      Serial.print(adjustable_setting_1);
-      Serial.print(" | ");
-      Serial.print(adjustable_setting_2);
-      Serial.print(" | ");
-      Serial.println(adjustable_setting_3);
+      Serial1.print("DEBUG Changing Param >");
+      Serial1.print(channel_1);
+      Serial1.print(" | ");
+      Serial1.print(channel_2);
+      Serial1.print(" | ");
+      Serial1.print(channel_3);
+      Serial1.print(" | ");
+      Serial1.print(channel_4);
+      Serial1.print(" | ");
+      Serial1.print(channel_5);
+      Serial1.print(" | ");
+      Serial1.print(channel_6);
+      Serial1.print(" | ");
+      Serial1.print(channel_7);
+      Serial1.print(" | ");
+      Serial1.print(channel_8);
+      Serial1.print(" | ");
+      Serial1.print(adjustable_setting_1);
+      Serial1.print(" | ");
+      Serial1.print(adjustable_setting_2);
+      Serial1.print(" | ");
+      Serial1.println(adjustable_setting_3);
     #endif
   }
 
