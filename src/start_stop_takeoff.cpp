@@ -7,7 +7,8 @@
 void start_stop_takeoff(void) {
 
   //if (channel_3 < 1050 && channel_4 < 1050) start = 1;                             //For starting the motors: throttle low and yaw left (step 1).
-  if (channel_5 >1950) start = 1;
+  if (channel_5 >1950 && start == 0) start = 1;
+  
   if (start == 1 && channel_3 < 1050 && channel_4 < 1050) {                        //When yaw stick is left (<1050) (back in the center (>1450) position ) start the motors (step 2).
     throttle = motor_idle_speed;                                                   //Set the base throttle to the motor_idle_speed variable.
     angle_pitch = angle_pitch_acc;                                                 //Set the gyro pitch angle equal to the accelerometer pitch angle when the quadcopter is started.
@@ -39,14 +40,16 @@ void start_stop_takeoff(void) {
       start = 0;                                                                   //Set the start variable to 0 to stop the motors.
     }
   }
+  
   //Stopping the motors: throttle low and yaw right.
   if (start == 2 && channel_3 < 1050 && channel_4 > 1950) {
     start = 1;                                                                     //Set the start variable to 0 to disable the motors.
+    throttle = motor_idle_speed;
     takeoff_detected = 0;                                                          //Reset the auto take-off detection.
   }
-  //disarming
-  if (channel_5 < 1050) start=0;
-  
+
+  // disarming
+  if (channel_5 < 1200 && start == 1) start = 0;
 
   if (takeoff_detected == 0 && start == 2) {                                       //When the quadcopter is started and no take-off is detected.
     if (channel_3 > 1480 && throttle < 1750) throttle++;                           //When the throttle is half way or higher, increase the throttle.

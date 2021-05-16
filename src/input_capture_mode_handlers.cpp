@@ -26,11 +26,5 @@ void handler_channel_1(void) {
   if (channel_select_counter == 7)channel_7 = measured_time;
   if (channel_select_counter == 8)channel_8 = measured_time;
 
-  #if defined (DEBUG_ISR) 
-      Serial1.print(">");
-      Serial1.print(channel_select_counter);
-      Serial1.print(" | ");
-      Serial1.println(measured_time);      
-  #endif
 }
 

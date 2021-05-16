@@ -221,16 +221,6 @@ void setup() {
   red_led(LOW);
   blue_led(LOW);
 
-/*
-  green_led(HIGH);                                              //status Leds check
-  delay(500);
-  green_led(LOW);  
-  
-  red_led(HIGH); 
-  delay(500);
-  red_led(LOW);
- */ 
-
   blue_led(HIGH); 
   delay(1500);
   blue_led(LOW);                                                
@@ -299,9 +289,6 @@ void setup() {
   }
   error = 0;                                                    //Reset the error status to 0.
 
-  //When everything is done, turn off the led.
-  //red_led(LOW);                                                 //Set output PB3 low.
-
   //Load the battery voltage to the battery_voltage variable.
   //The STM32 uses a 12 bit analog to digital converter.
   //analogRead => 0 = 0V ..... 4095 = 3.3V
@@ -343,9 +330,7 @@ void setup() {
 
   if (motor_idle_speed < 1000) motor_idle_speed = 1000;         //Limit the minimum idle motor speed to 1000us.
   if (motor_idle_speed > 1200) motor_idle_speed = 1200;         //Limit the maximum idle motor speed to 1200us.
- 
-  //receiver_watchdog = 850;                                    // avoid RTH 
-
+   
   loop_timer = micros();                                        //Set the timer for the first loop.
 }
 
@@ -363,10 +348,10 @@ void loop() {
     channel_4 = 1500;
     error = 8;
     if (number_used_sats > 5){
-      if(home_point_recorded == 1) channel_6 = 2000;
-      else channel_6 = 1750;
+      if(home_point_recorded == 1) channel_6 = 2000;     //RTH
+      else channel_6= 1750;                              //Alt + GPS hold 
     }
-    else channel_6 = 1500;    
+    else channel_6 = 1500;                               //Alt hold
   }
 
   //Some functions are only accessible when the quadcopter is off.
@@ -388,15 +373,16 @@ void loop() {
     }
     if (channel_7 < 1900) previous_channel_7 = 0;
   }
+  // normal operatig mode - drone flying
 
   heading_lock = 0;
-  if (channel_7 > 1200) heading_lock = 1;                                           //If channel 6 is between 1200us and 1600us the flight mode is 2
+    if (channel_7 > 1200) heading_lock = 1;                                         //If channel 6 is between 1200us and 1600us the flight mode is 2
 
-  flight_mode = 1;                                                                  //In all other situations the flight mode is 1;
-  if (channel_6 >= 1200 && channel_6 < 1600) flight_mode = 2;                       //If channel 5 is between 1200us and 1600us the flight mode is 2
-  if (channel_6 >= 1600 && channel_6 < 1950) flight_mode = 3;                       //If channel 5 is between 1600us and 1900us the flight mode is 3
+  flight_mode = 1;                                                                  //In all other situations the flight mode is 1 (auto level);
+  if (channel_6 >= 1200 && channel_6 < 1600) flight_mode = 2;                       //If channel 5 is between 1200us and 1600us the flight mode is 2 ( Alt hold)
+  if (channel_6 >= 1600 && channel_6 < 1950) flight_mode = 3;                       //If channel 5 is between 1600us and 1900us the flight mode is 3 (Alt + GPS hold)
   if (channel_6 >= 1950 && channel_6 < 2100) {
-    if (waypoint_set == 1 && home_point_recorded == 1 && start == 2) flight_mode = 4;
+    if (waypoint_set == 1 && home_point_recorded == 1 && start == 2) flight_mode = 4; // mode 4 (RTH)
     else flight_mode = 3;
   }
 
@@ -429,18 +415,21 @@ void loop() {
       Serial1.print(channel_3);
       Serial1.print(" | CH4: ");
       Serial1.print(channel_4);
-      Serial1.print(" | CH5: ");
-      Serial1.print(channel_5);
+      //Serial1.print(" | CH5: ");
+      //Serial1.print(channel_5);
       Serial1.print(" | CH6: ");
       Serial1.print(channel_6);
       Serial1.print(" | CH7: ");
       Serial1.print(channel_7);
       Serial1.print(" | CH8: ");
       Serial1.print(channel_8);
+      Serial1.print(" | ST:");
+      Serial1.print(start);
       Serial1.print(" | FM:");
       Serial1.print(flight_mode);
-      Serial1.print(" | WD: ");
-      Serial1.println(receiver_watchdog);
+      //Serial1.print(" | WD: ");
+      //Serial1.print(receiver_watchdog);
+      Serial1.println(".");
   #endif
 
   //65.5 = 1 deg/sec (check the datasheet of the MPU-6050 for more information).

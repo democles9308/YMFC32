@@ -9,11 +9,9 @@
 #define variable_2_to_adjust pid_i_gain_roll  
 #define variable_3_to_adjust pid_d_gain_roll  
 
-#define DEBUG                   // to activate debug code
+//#define DEBUG                   // to activate debug code
+//#define DEBUG_LOOP
 //#define DEBUG_CHG
-#define DEBUG_LOOP
-//#define DEBUG_ISR
-
 
 extern class TwoWire HWire;
 
@@ -70,7 +68,7 @@ extern int16_t gyro_pitch, gyro_roll, gyro_yaw;
 extern int32_t channel_1, channel_1_start, channel_1_base, pid_roll_setpoint_base;
 extern int32_t channel_2, channel_2_start, channel_2_base, pid_pitch_setpoint_base;
 extern int32_t channel_3, channel_4, channel_5, channel_6, channel_7, channel_8;
-extern int32_t channel_3_start,channel_4_start,channel_5_start,channel_6_start,channel_7_start,channel_8_start;
+extern int32_t channel_3_start,channel_4_start,channel_5_start,channel_6_start,previous_channel_7;
 extern int32_t measured_time, measured_time_start, receiver_watchdog;
 extern int32_t acc_total_vector, acc_total_vector_at_start;
 extern int32_t gyro_roll_cal, gyro_pitch_cal, gyro_yaw_cal;
